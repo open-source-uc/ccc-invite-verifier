@@ -102,6 +102,26 @@ function verificationPage(
 
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+
+  <style>
+    .cf-turnstile {
+        width: 100%;
+        max-width: 100%;
+        display: flex;
+        justify-content: center;
+    }
+
+    .cf-turnstile iframe {
+        max-width: 100%;
+    }
+
+    @media (max-width: 360px) {
+        main {
+            padding-left: 16px;
+            padding-right: 16px;
+        }
+    }
+  </style>
 </head>
 
 <body class="min-h-screen flex items-center justify-center bg-[#0d1117] px-5 py-10">
