@@ -3,6 +3,7 @@ interface Env {
 	PB_WORKER_KEY: string;
 	TURNSTILE_SITE_KEY: string;
 	TURNSTILE_SECRET: string;
+	ALLOWED_ORIGIN?: string;
 }
 
 interface TurnstileResponse {
@@ -21,6 +22,19 @@ interface PocketBaseResponse {
 
 const ALLOWED_SOURCES = ["groups", "courses"];
 const ALLOWED_PLATFORMS = ["telegram", "whatsapp"];
+
+function corsHeaders(request: Request, env: Env) {
+	const allowedOrigin = env.ALLOWED_ORIGIN || "https://ccc.ing.puc.cl";
+
+	const origin = request.headers.get("Origin");
+
+	return {
+		"Access-Control-Allow-Origin": origin === allowedOrigin ? origin : "null",
+		"Access-Control-Allow-Methods": "GET, OPTIONS",
+		"Access-Control-Allow-Headers": "Content-Type",
+		Vary: "Origin",
+	};
+}
 
 function validParams(source: string, id: string, platform: string): boolean {
 	return (
@@ -202,6 +216,86 @@ function safeInviteUrl(value: string, platform: string): boolean {
 export default {
 	async fetch(request: Request, env: Env): Promise<Response> {
 		const currentUrl = new URL(request.url);
+
+		if (request.method === "OPTIONS") {
+			return new Response(null, {
+				status: 204,
+				headers: corsHeaders(request, env),
+			});
+		}
+
+		if (request.method === "GET" && currentUrl.pathname === "/availability") {
+			const source = currentUrl.searchParams.get("source") ?? "";
+
+			if (!ALLOWED_SOURCES.includes(source)) {
+				return Response.json(
+					{ error: "Parámetros inválidos" },
+					{
+						status: 400,
+						headers: corsHeaders(request, env),
+					}
+				);
+			}
+
+			const apiUrl = new URL(
+				`${env.PB_URL.replace(/\/$/, "")}/api/collections/invite_links/records`
+			);
+
+			apiUrl.searchParams.set("filter", `source="${source}"`);
+			apiUrl.searchParams.set("perPage", "500");
+
+			const response = await fetch(apiUrl, {
+				headers: {
+					"X-Worker-Key": env.PB_WORKER_KEY,
+				},
+			});
+
+			if (!response.ok) {
+				return Response.json({
+					status: 502,
+					headers: corsHeaders(request, env),
+				});
+			}
+
+			const data = (await response.json()) as {
+				items?: {
+					record_id: string;
+					platform: string;
+					url: string;
+				}[];
+			};
+
+			const availability: Record<
+				string,
+				{ telegram: boolean; whatsapp: boolean }
+			> = {};
+
+			for (const invite of data.items ?? []) {
+				if (
+					!invite.record_id ||
+					!ALLOWED_PLATFORMS.includes(invite.platform) ||
+					!safeInviteUrl(invite.url, invite.platform)
+				) {
+					continue;
+				}
+
+				availability[invite.record_id] ??= {
+					telegram: false,
+					whatsapp: false,
+				};
+
+				availability[invite.record_id][
+					invite.platform as "telegram" | "whatsapp"
+				] = true;
+			}
+
+			return Response.json(availability, {
+				headers: {
+					...corsHeaders(request, env),
+					"Cache-Control": "no-store",
+				},
+			});
+		}
 
 		if (request.method === "GET") {
 			const source = currentUrl.searchParams.get("source") ?? "";

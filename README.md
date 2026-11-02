@@ -8,11 +8,11 @@ El proyecto utiliza Cloudflare Workers, Cloudflare Turnstile y PocketBase para c
 
 El sistema está compuesto por tres servicios:
 
-| Servicio | Responsabilidad |
-|---|---|
+| Servicio             | Responsabilidad                                                                              |
+| -------------------- | -------------------------------------------------------------------------------------------- |
 | Cloudflare Turnstile | Verifica que las solicitudes sean realizadas por usuarios que superaron el desafío antibots. |
-| Cloudflare Workers | Ejecuta la lógica de verificación y controla el acceso a las invitaciones. |
-| PocketBase | Almacena las invitaciones y permite su administración. |
+| Cloudflare Workers   | Ejecuta la lógica de verificación y controla el acceso a las invitaciones.                   |
+| PocketBase           | Almacena las invitaciones y permite su administración.                                       |
 
 El Worker funciona como intermediario entre el usuario y PocketBase. Los usuarios nunca deberían necesitar acceso directo a las credenciales internas de la base de datos.
 
@@ -63,10 +63,10 @@ El nombre de la variable puede ser público; su valor debe permanecer privado.
 
 El sistema utiliza dos claves proporcionadas por Cloudflare:
 
-| Variable / dato | Uso | Exposición |
-|---|---|---|
-| `TURNSTILE_SITE_KEY` | Identifica el widget en el frontend. | Pública |
-| `TURNSTILE_SECRET_KEY` | Permite validar los tokens desde el backend. | Privada |
+| Variable / dato        | Uso                                          | Exposición |
+| ---------------------- | -------------------------------------------- | ---------- |
+| `TURNSTILE_SITE_KEY`   | Identifica el widget en el frontend.         | Pública    |
+| `TURNSTILE_SECRET_KEY` | Permite validar los tokens desde el backend. | Privada    |
 
 La Site Key se utiliza para renderizar el widget y puede estar presente en el HTML.
 
@@ -91,11 +91,13 @@ El Worker actúa como intermediario autorizado y utiliza su credencial interna p
 Esto permite separar dos niveles de acceso:
 
 **Acceso público**
+
 - Visualizar el formulario.
 - Completar la verificación.
 - Solicitar una invitación.
 
 **Acceso interno**
+
 - Consultar las invitaciones.
 - Ejecutar operaciones autorizadas sobre los registros.
 - Gestionar la comunicación con PocketBase.
@@ -104,10 +106,9 @@ La credencial `PB_WORKER_KEY` forma parte de este mecanismo de separación.
 
 Por lo tanto, conocer la URL pública de PocketBase no debería ser suficiente para obtener invitaciones.
 
-
 ### Configuración de las API Rules de PocketBase
 
-La protección de las invitaciones se implementa mediante las reglas de acceso (*API Rules*) de PocketBase.
+La protección de las invitaciones se implementa mediante las reglas de acceso (_API Rules_) de PocketBase.
 
 En particular, la regla **List/Search Rule** de la colección que almacena las invitaciones debe configurarse para exigir la credencial interna utilizada por el Worker.
 
