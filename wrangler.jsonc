@@ -7,6 +7,7 @@
 	"name": "ccc-invite-verifier",
 	"main": "src/index.ts",
 	"compatibility_date": "2026-11-02",
+	"keep_vars": true,
 	"observability": {
 		"enabled": true,
 	},
