@@ -14,7 +14,7 @@
 	"upload_source_maps": true,
 	"vars": {
 		"PB_URL": "https://ccc.ing.puc.cl/pb",
-		"TURNSTILE_SITE_KEY": "0x4AAAAAAFwkiRhdaEGPgSH4"
+		"TURNSTILE_SITE_KEY": "0x4AAAAAAFwkiRhdaEGPgSH4",
 	},
 	/**
 	 * Smart Placement

@@ -44,12 +44,41 @@ function errorPage(message: string, status = 400): Response {
 	return htmlResponse(
 		`<!doctype html>
 		<html lang="es">
-		<meta charset="utf-8">
-		<meta name="viewport" content="width=device-width">
-		<title>CCC · Verificación</title>
-		<body style="font-family:system-ui;text-align:center;padding:3rem">
-		<h2>No se pudo verificar</h2>
-		<p>${message}</p>
+		<head>
+			<meta charset="utf-8">
+			<meta name="viewport" content="width=device-width, initial-scale=1">
+			<meta name="theme-color" content="#0d1117">
+			<title>CCC · Verificación</title>
+			<script src="https://cdn.tailwindcss.com"></script>
+		</head>
+
+		<body class="min-h-screen flex items-center justify-center bg-[#0d1117] px-5 py-10 text-white">
+			<div class="fixed inset-0 overflow-hidden pointer-events-none">
+				<div class="absolute -top-32 -left-32 w-96 h-96 bg-indigo-600/30 rounded-full blur-3xl"></div>
+				<div class="absolute -bottom-32 -right-32 w-96 h-96 bg-violet-600/20 rounded-full blur-3xl"></div>
+			</div>
+
+			<main class="w-full max-w-md bg-white border border-white/10 rounded-3xl p-8 sm:p-10 text-center shadow-2xl">
+				<h1 class="text-2xl font-extrabold text-slate-900 tracking-tight mb-3">
+					No se pudo verificar
+				</h1>
+
+				<p class="text-slate-500 text-sm leading-relaxed mb-8">
+					${message}
+				</p>
+
+				<button onclick="history.back()"
+					class="w-full max-w-[320px] bg-[#138dff] hover:bg-[#1075d6] active:scale-[0.98] text-white font-bold py-4 px-2 rounded-xl shadow-lg shadow-indigo-600/20 transition-all duration-200">
+					Volver e intentar nuevamente
+				</button>
+
+				<div class="border-t border-slate-100 mt-8 pt-6">
+					<p class="text-xs text-slate-400">
+						<span class="font-semibold text-slate-600">CCC x OSUC · Sistema Antibots</span><br>
+						Invitaciones protegidas mediante Cloudflare.
+					</p>
+				</div>
+			</main>
 		</body>
 		</html>`,
 		status
@@ -68,27 +97,60 @@ function verificationPage(
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0f172a">
   <title>CCC · Verificar invitación</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
-  <style>
-    body{font-family:system-ui,sans-serif;background:#f5f5f5;display:grid;place-items:center;min-height:100vh;margin:0;color:#222}
-    main{background:white;padding:2rem;border-radius:16px;max-width:360px;width:calc(100% - 64px);text-align:center;box-shadow:0 8px 30px #0001}
-    button{background:#2563eb;color:white;border:0;padding:12px 22px;border-radius:8px;font-size:16px;margin-top:18px;cursor:pointer}
-    .error{color:#b91c1c}
-  </style>
 </head>
-<body>
-  <main>
-    <h2>Acceso a la comunidad CCC</h2>
-    <p>Completa la verificación para continuar a la invitación.</p>
-    ${message ? `<p class="error">${message}</p>` : ""}
+
+<body class="min-h-screen flex items-center justify-center bg-[#0d1117] px-5 py-10">
+
+  <div class="fixed inset-0 overflow-hidden pointer-events-none">
+    <div class="absolute -top-32 -left-32 w-96 h-96 bg-indigo-600/30 rounded-full blur-3xl"></div>
+    <div class="absolute -bottom-32 -right-32 w-96 h-96 bg-violet-600/20 rounded-full blur-3xl"></div>
+  </div>
+
+  <main class="relative w-full max-w-md bg-white rounded-3xl shadow-2xl p-8 sm:p-10 text-center">
+    <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight mb-3">
+      Accede a la comunidad del DCC UC
+    </h1>
+
+    <p class="text-slate-500 text-base leading-relaxed mb-7">
+      Estás a un paso de unirte al grupo de ${platform}.
+      Completa esta pequeña verificación para continuar.
+    </p>
+
+    ${
+			message
+				? `
+      <div class="bg-red-50 border border-red-200 text-red-700 text-sm rounded-xl p-3 mb-5">
+        ${message}
+      </div>
+    `
+				: ""
+		}
+
     <form method="POST">
-      <input type="hidden" name="source" value="${source}">
-      <input type="hidden" name="id" value="${id}">
-      <input type="hidden" name="platform" value="${platform}">
-      <div class="cf-turnstile" data-sitekey="${siteKey}"></div>
-      <button type="submit">Verificar y continuar</button>
+		<input type="hidden" name="source" value="${source}">
+		<input type="hidden" name="id" value="${id}">
+		<input type="hidden" name="platform" value="${platform}">
+
+		<div class="cf-turnstile" data-sitekey="${siteKey}" data-theme="light"></div>
+
+      	<button type="submit"
+			class="w-full max-w-[320px] mt-6 bg-[#138dff] hover:bg-[#1075d6] active:scale-[0.98] text-white font-bold py-4 px-2 rounded-xl shadow-lg shadow-indigo-600/20 transition-all duration-200">
+			Verificar y continuar
+		</button>
     </form>
+
+    <div class="border-t border-slate-100 mt-8 pt-6">
+      <p class="text-xs text-slate-400">
+        <span class="font-semibold text-slate-600">CCC x OSUC · Sistema Antibots</span><br>
+        Invitaciones protegidas mediante Cloudflare.
+      </p>
+    </div>
+
   </main>
 </body>
 </html>`);
@@ -191,6 +253,14 @@ export default {
 
 		const data = (await pbResponse.json()) as PocketBaseResponse;
 		const invite = data.items?.[0];
+
+		if (!invite) {
+			return errorPage("No se pudo encontrar la invitación.", 404);
+		}
+
+		if (!safeInviteUrl(invite.url, platform)) {
+			return errorPage("La URL de invitación no está permitida.", 400);
+		}
 
 		if (!invite || !safeInviteUrl(invite.url, platform)) {
 			return errorPage("La invitación no existe o ya no está disponible.", 404);
