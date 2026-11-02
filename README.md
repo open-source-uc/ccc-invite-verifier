@@ -104,7 +104,33 @@ La credencial `PB_WORKER_KEY` forma parte de este mecanismo de separación.
 
 Por lo tanto, conocer la URL pública de PocketBase no debería ser suficiente para obtener invitaciones.
 
-Esta protección depende de que las reglas de acceso y la implementación de autorización estén correctamente configuradas.
+
+### Configuración de las API Rules de PocketBase
+
+La protección de las invitaciones se implementa mediante las reglas de acceso (*API Rules*) de PocketBase.
+
+En particular, la regla **List/Search Rule** de la colección que almacena las invitaciones debe configurarse para exigir la credencial interna utilizada por el Worker.
+
+El mecanismo funciona de la siguiente manera:
+
+1. Acceder al panel de administración de PocketBase.
+2. Abrir la colección que almacena las invitaciones.
+3. Ingresar a la sección **API Rules**.
+4. Localizar el campo **List/Search Rule**.
+5. Configurar la regla para que las consultas solo sean permitidas cuando se presente la credencial interna correspondiente.
+6. Guardar los cambios.
+
+La variable `PB_WORKER_KEY` contiene el valor que utiliza el Worker para satisfacer esta condición de autorización.
+
+De esta forma:
+
+- Una consulta pública sin la credencial correspondiente no puede listar ni buscar invitaciones.
+- El Worker puede realizar las consultas autorizadas utilizando `PB_WORKER_KEY`.
+- El valor de la credencial nunca necesita exponerse al frontend.
+
+**Importante:** el valor de `PB_WORKER_KEY` debe mantenerse privado y coincidir con el valor esperado por la regla configurada en PocketBase. No debe copiarse en documentación pública, capturas de pantalla ni archivos versionados.
+
+La regla debe configurarse de acuerdo con el mecanismo de autenticación implementado por el Worker. No basta con ocultar la URL de PocketBase: la protección efectiva depende de las API Rules y de la validación de la credencial.
 
 ## 5. Configuración de una nueva instancia
 
