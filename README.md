@@ -117,7 +117,7 @@ El mecanismo funciona de la siguiente manera:
 2. Abrir la colección que almacena las invitaciones.
 3. Ingresar a la sección **API Rules**.
 4. Localizar el campo **List/Search Rule**.
-5. Configurar la regla para que las consultas solo sean permitidas cuando se presente la credencial interna correspondiente.
+5. Configurar la regla para que las consultas solo sean permitidas cuando se presente la credencial interna correspondiente: `@request.headers.x_worker_key = "CREDENCIAL"`.
 6. Guardar los cambios.
 
 La variable `PB_WORKER_KEY` contiene el valor que utiliza el Worker para satisfacer esta condición de autorización.
