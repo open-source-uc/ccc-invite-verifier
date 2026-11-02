@@ -111,7 +111,7 @@ function verificationPage(
     <div class="absolute -bottom-32 -right-32 w-96 h-96 bg-violet-600/20 rounded-full blur-3xl"></div>
   </div>
 
-  <main class="relative w-full max-w-md bg-white rounded-3xl shadow-2xl p-8 sm:p-10 text-center">
+  <main class="relative w-full max-w-md min-w-0 overflow-hidden bg-white rounded-3xl shadow-2xl p-5 sm:p-10 text-center">
     <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight mb-3">
       Accede a la comunidad del DCC UC
     </h1>
@@ -136,7 +136,14 @@ function verificationPage(
 		<input type="hidden" name="id" value="${id}">
 		<input type="hidden" name="platform" value="${platform}">
 
-		<div class="cf-turnstile" data-sitekey="${siteKey}" data-theme="light"></div>
+		<div class="w-full flex justify-center overflow-hidden">
+			<div
+				class="cf-turnstile"
+				data-sitekey="${siteKey}"
+				data-theme="light"
+				data-size="flexible">
+			</div>
+		</div>
 
       	<button type="submit"
 			class="w-full max-w-[320px] mt-6 bg-[#138dff] hover:bg-[#1075d6] active:scale-[0.98] text-white font-bold py-4 px-2 rounded-xl shadow-lg shadow-indigo-600/20 transition-all duration-200">
